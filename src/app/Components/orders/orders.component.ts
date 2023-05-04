@@ -7,7 +7,7 @@ import { ServiceService } from 'src/app/Services/service.service';
   styleUrls: ['./orders.component.css'],
 })
 export class OrdersComponent implements OnInit {
-  orders: any[] = [];
+  orders: any = [];
   shipped: number = 0;
   cancelled: number = 0;
   deliverd: number = 0;
@@ -18,52 +18,93 @@ export class OrdersComponent implements OnInit {
   constructor(private service: ServiceService) {}
 
   ngOnInit(): void {
-    // this.getOrders();
+    this.getOrders();
+    this.getSellerOrders();
   }
 
-  // getOrders() {
-  //   this.lodaing = true;
-  //   this.service.getAllOrders().subscribe((result: any) => {
-  //     this.orders = result;
+  getSellerOrders() {
+    this.service.getSellerOrders().subscribe((res) => {
+      this.orders = res;
+      console.log(this.orders);
+    });
+  }
 
-  //     let counter = 0;
-  //     for (const obj of this.orders) {
-  //       if (obj.status === 'Deliverd') counter++;
-  //     }
-  //     this.deliverd = counter;
+  getOrders() {
+    this.lodaing = true;
+    this.service.getSellerOrders().subscribe((result: any) => {
+      this.orders = result;
 
-  //     let counter1 = 0;
-  //     for (const obj of this.orders) {
-  //       if (obj.status === 'Shipped') counter1++;
-  //     }
-  //     this.shipped = counter1;
+      let counter = 0;
+      for (const obj of this.orders) {
+        if (obj.status === 'Deliverd') counter++;
+      }
+      this.deliverd = counter;
 
-  //     let counter2 = 0;
-  //     for (const obj of this.orders) {
-  //       if (obj.status === 'Cancelled') counter2++;
-  //     }
-  //     this.cancelled = counter2;
+      let counter1 = 0;
+      for (const obj of this.orders) {
+        if (obj.status === 'Shipped') counter1++;
+      }
+      this.shipped = counter1;
 
-  //     let counter3 = 0;
-  //     for (const obj of this.orders) {
-  //       if (obj.status === 'Pending') counter3++;
-  //     }
-  //     this.pending = counter3;
-  //     this.lodaing = false;
-  //   });
-  // }
+      let counter2 = 0;
+      for (const obj of this.orders) {
+        if (obj.status === 'Cancelled') counter2++;
+      }
+      this.cancelled = counter2;
 
-  // orderID(id: any) {
-  //   this.id = id;
-  // }
+      let counter3 = 0;
+      for (const obj of this.orders) {
+        if (obj.status === 'Pending') counter3++;
+      }
+      this.pending = counter3;
+      this.lodaing = false;
+    });
+  }
 
-  // newStatus(status: string) {
-  //   this.newStatusValue = status;
-  //   this.service
-  //     .updateOrderStatus(this.id, this.newStatusValue)
-  //     .subscribe((res) => {
-  //       this.getOrders();
-  //       window.location.reload();
-  //     });
-  // }
+  orderID(id: any) {
+    this.id = id;
+  }
+
+  newStatus(status: string) {
+    this.newStatusValue = status;
+    this.service
+      .updateOrderStatus(this.id, this.newStatusValue)
+      .subscribe((res) => {
+        this.getOrders();
+        window.location.reload();
+      });
+  }
+
+  confirmOrder(id: any) {
+    console.log(id);
+    this.service
+      .cancelOrder(id, {
+        status: 'Confirm',
+      })
+      .subscribe((data: any) => {
+        // Update the status of the order in the UI
+        const orderIndex = this.orders.findIndex(
+          (order: any) => order._id === id
+        );
+        // if (orderIndex > -1) {
+        //   this.orders[orderIndex].parentOrder.status = 'Confirm';
+        // }
+      });
+  }
+
+  cancelOrder(id: any) {
+    this.service
+      .cancelOrder(id, {
+        status: 'Cancel',
+      })
+      .subscribe((data: any) => {
+        // Update the status of the order in the UI
+        const orderIndex = this.orders.findIndex(
+          (order: any) => order._id === id
+        );
+        // if (orderIndex > -1) {
+        //   this.orders[orderIndex].parentOrder.status = 'Cancel';
+        // }
+      });
+  }
 }

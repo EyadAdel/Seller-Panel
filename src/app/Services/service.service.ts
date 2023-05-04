@@ -34,7 +34,9 @@ export class ServiceService {
     return this.http.get(`${environment.APIURL}/subSubDepartments`);
   }
 
-  getSellerOrders() {}
+  getSellerOrders() {
+    return this.http.get(`${environment.APIURL}/seller/orders`);
+  }
 
   confirmOrderStatus() {}
   // Add
@@ -57,5 +59,24 @@ export class ServiceService {
 
   updateOrderStatus(id: object, status: any) {
     return this.http.patch(`${environment.APIURL}/order/${id}`, { status });
+  }
+
+  getAllProductsApprove() {
+    return this.http.get(`${environment.APIURL}/productApproval`);
+  }
+
+  setProductApprove(id: any, response: object) {
+    return this.http.post(
+      `${environment.APIURL}/productApproval/${id}`,
+      response
+    );
+  }
+
+  cancelOrder(id: object, status: object) {
+    return this.http.put(`${environment.APIURL}/seller/orders/${id}`, status);
+  }
+
+  confirmOrder(id: object, status: object) {
+    return this.http.put(`${environment.APIURL}/seller/orders/${id}`, status);
   }
 }
